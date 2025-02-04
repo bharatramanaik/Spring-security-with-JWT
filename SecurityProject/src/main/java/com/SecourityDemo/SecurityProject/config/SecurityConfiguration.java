@@ -3,7 +3,6 @@ package com.SecourityDemo.SecurityProject.config;
 import com.SecourityDemo.SecurityProject.jwt.AuthEntryPointJwt;
 import com.SecourityDemo.SecurityProject.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,21 +12,14 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -40,6 +32,7 @@ public class SecurityConfiguration {
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
+
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -57,20 +50,23 @@ public class SecurityConfiguration {
                 authorizeRequests
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/**").permitAll()
-                        .anyRequest().permitAll());
-        http.sessionManagement(
-                session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
-        http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
+                        .anyRequest().authenticated());
+
+//        http.sessionManagement(
+//                session ->
+//                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//
+        http.oauth2Login(oauth2 ->
+                oauth2.defaultSuccessUrl("http://localhost:3000/dashboard",true));
+
+//        http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
         //http.httpBasic(withDefaults());
         http.headers(headers -> headers
                 .frameOptions(frameOptions -> frameOptions
                         .sameOrigin()
                 )
         );
-        http.oauth2Login(oauth2 ->
-                oauth2.defaultSuccessUrl("http://localhost:3000/dashboard",true));
+
         return http.build();
     }
 

@@ -1,11 +1,13 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import Dashboard from "./Dashboard";
+import { TokenContext } from "../App";
 
 const Login = () => {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     
-    const [profile, setProfile] = useState(null)
+    const [profile, setProfile] = useState("")
+    const {setToken} =useContext(TokenContext)
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -20,14 +22,12 @@ const Login = () => {
 
             if(response.ok){
                 const data = await response.json();
-                console.log(data);
-                
-                // setJwt(data.jwtToken);
-                // setMessage("login successfull");
                 const token = data.jwtToken
-                fetchUserprofile(token);
+                setToken(token)
+                setProfile("successfull")
             }else{
                 // setMessage("login fail");
+                // setProfile("fail")
             }
         } catch (error) {
             // setMessage("error occured");
@@ -37,33 +37,33 @@ const Login = () => {
         
     }
 
-    const fetchUserprofile = async (token) => {
+    // const fetchUserprofile = async (token) => {
 
-        try {
-            console.log(token);
-            // e.preventDefault();
-            const response = await fetch("http://localhost:8080/user/profile",{
-                method: "GET",
-                headers:{
-                    "Authorization":`Bearer ${token} `
-                }
+    //     try {
+    //         console.log(token);
+    //         // e.preventDefault();
+    //         const response = await fetch("http://localhost:8080/user/profile",{
+    //             method: "GET",
+    //             headers:{
+    //                 "Authorization":`Bearer ${token} `
+    //             }
                 
-            });
-            console.log(response);
+    //         });
+    //         console.log(response);
             
-            if(response.ok){
-                const data = await response.json();
-                setProfile(data)
-            }else{
-                // setMessage("failed to fetch profile");
-            }
-        } catch (error) {
-            // setMessage("error occured in fetching");
-            console.log(error);
+    //         if(response.ok){
+    //             const data = await response.json();
+    //             setProfile(data)
+    //         }else{
+    //             // setMessage("failed to fetch profile");
+    //         }
+    //     } catch (error) {
+    //         // setMessage("error occured in fetching");
+    //         console.log(error);
             
-        }
+    //     }
         
-    }
+    // }
 
     
 

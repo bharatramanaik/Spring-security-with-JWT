@@ -77,8 +77,14 @@ public class StudentController {
 
     @GetMapping("/userdetails")
     public Map<String, Object> userdata(@AuthenticationPrincipal OAuth2User principal){
-       return principal.getAttributes();
-
+        return principal.getAttributes();
+//        if(authentication != null && authentication.isAuthenticated()){
+//            Object principal = authentication.getPrincipal();
+//            if(principal instanceof OAuth2User oAuth2User){
+//                return oAuth2User.getAttribute("email");
+//            }
+//        }
+//        return "";
     }
 
 
@@ -88,6 +94,8 @@ public class StudentController {
         logger.debug("Authorization Header: {}",request.getHeader("Authorization"));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+
 
         Map<String,Object> profile = new HashMap<>();
         profile.put("username", userDetails.getUsername());
